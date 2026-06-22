@@ -1,0 +1,40 @@
+# Backup files
+*.bak
+*.bak.*
+printer.cfg.bak.*
+
+# Klipper / Moonraker runtime artifacts (not config)
+*.log
+*.pid
+*.lock
+klippy.log*
+moonraker.log*
+
+# Variables / state files saved by Klipper
+*.cfg.save
+variables.cfg
+SAVE_VARIABLES.cfg
+
+# Personal IP / hostname files
+moonraker.local.conf
+*.local.cfg
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
