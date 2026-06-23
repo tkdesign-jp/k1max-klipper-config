@@ -85,11 +85,11 @@ Known modifications on the reference unit:
 | Nozzle | [Trianglelab ZS V6](https://trianglelab.net/products/m6-zs-nozzle-hardened-steel-copper-alloy) (Hardened Steel + Copper Alloy, M6 thread) | Fits because CHCB-OT uses M6/V6 thread, **not** the stock Creality Unicorn nozzle |
 | Heater | Ceramic heater coil (CHC series, ~60 W) | Faster heat-up than stock cartridge heater |
 | Heatbreak | Bi-metal (titanium + copper alloy) | Part of CHCB-OT kit |
-| Thermistor | PT1000 | **Not** the stock NTC100K — `sensor_type` and `pullup_resistor` in `printer.cfg` must match |
+| Thermistor | NTC100K B3950 (supplied with CHCB-OT kit) | Klipper `sensor_type = "Generic 3950"`. Note: stock K1 MAX cfg lists `EPCOS 100K B57560G104F` for the same connector — slightly different beta. If migrating from a stock cfg, switch sensor_type to `Generic 3950` and re-run `PID_CALIBRATE EXTRUDER`. |
 
 Why this matters for the config:
 
-- **Sensor type changed**: stock is NTC100K, this build uses PT1000. Wrong `sensor_type` means temperature readings will be completely off and `verify_heater` will trigger or worse.
+- **Sensor type label**: this build uses NTC100K B3950. Klipper's `Generic 3950` is the correct sensor_type. The stock K1 MAX cfg from Creality often lists `EPCOS 100K B57560G104F`, which has a slightly different beta — temperatures will drift a few degrees at high temps if mismatched.
 - **Ceramic heater (~60 W) + copper alloy nozzle** = much faster heat-up and a different thermal response. PID values are different from stock.
 - **Hardened steel tip** allows abrasive filaments (carbon fibre) and higher target temperatures than the stock nozzle, but `max_temp` must still be capped to a safe value.
 - **Pressure Advance** was measured with this specific nozzle / hotend combination. Re-tune for yours.
@@ -102,11 +102,17 @@ If your hardware differs in any of the above, **measure your own values before u
 ## Files in this repository
 
 ```
-printer.cfg          Klipper main config
-(more files to come — macros, sensor configs, etc.)
+printer.cfg          Klipper main config (with header documenting the hardware)
+sensorless.cfg       Sensorless homing config (included from printer.cfg)
+gcode_macro.cfg      START_PRINT / END_PRINT and helper macros
+printer_params.cfg   Printer-wide parameters (kinematics, limits)
 ```
 
-> 🚧 This repository is being populated. The actual `printer.cfg` will be uploaded as soon as it's sanitized (any device-specific UUIDs / paths reviewed and removed where appropriate).
+Notes on the bundled `printer.cfg`:
+
+- The Creality auto-generated `SAVE_CONFIG` block (PID save data, bed mesh, prtouch defaults) has been **stripped**. Those values are per-unit calibration output and shouldn't be reused across printers. Run your own calibrations and Klipper will regenerate the block.
+- The `[prtouch_v2]` section in the original file contains Creality-proprietary binary/encoded data on a few lines. Those lines are preserved exactly as the printer shipped them — **do not edit them**.
+- All `[include Helper-Script/...]` files in the original cfg refer to the upstream [Helper-Script](https://github.com/Guilouz/Creality-Helper-Script) project and are not duplicated here. Install Helper-Script separately if your printer uses it.
 
 ---
 
